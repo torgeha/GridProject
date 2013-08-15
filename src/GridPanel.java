@@ -27,7 +27,7 @@ public class GridPanel extends JPanel{
 	private final int rows;
 	private final int columns;
 	
-	private Map<Point2D.Double, Rectangle2D.Double> recList;
+	private Map<Point2D.Double, Rectangle> recList;
 	
 	private GridModel model;
 
@@ -35,7 +35,7 @@ public class GridPanel extends JPanel{
 		this.model = model;
 		this.rows = model.getRows();
 		this.columns = model.getColumns();
-		this.recList = new HashMap<Point2D.Double, Rectangle2D.Double>();
+		this.recList = new HashMap<Point2D.Double, Rectangle>();
 
 		setPreferredSize(new Dimension(columns * CELL_SIZE, rows * CELL_SIZE));
 		addMouseListener(new MListener());
@@ -61,7 +61,7 @@ public class GridPanel extends JPanel{
 					* CELL_SIZE));
 		}
 		// set g2 ready for rectangle drawing
-		GradientPaint redToWhite;
+		GradientPaint colorToWhite;
 		int gradXStart;
 		int gradYStart;
 
@@ -72,10 +72,13 @@ public class GridPanel extends JPanel{
 				// calculate gradient fill
 				gradXStart = (int) key.getX();
 				gradYStart = (int) key.getY();
-				redToWhite = new GradientPaint(gradXStart, gradYStart,
-						Color.RED, gradXStart + CELL_SIZE, gradYStart
+				
+				Color actualColor = recList.get(key).getColor();
+				
+				colorToWhite = new GradientPaint(gradXStart, gradYStart,
+						actualColor, gradXStart + CELL_SIZE, gradYStart
 								+ CELL_SIZE, Color.WHITE);
-				g2.setPaint(redToWhite);
+				g2.setPaint(colorToWhite);
 				
 				g2.draw(recList.get(key));
 				g2.fill(recList.get(key));
@@ -105,8 +108,8 @@ public class GridPanel extends JPanel{
 			recList.remove(coordinate);
 		}
 		else {
-			Rectangle2D.Double rec = new Rectangle2D.Double(coordinate.getX(), coordinate.getY(), CELL_SIZE
-					- (2 * STROKE), CELL_SIZE - (2 * STROKE));
+			Rectangle rec = new Rectangle(coordinate.getX(), coordinate.getY(), CELL_SIZE
+					- (2 * STROKE), CELL_SIZE - (2 * STROKE), Color.BLUE);
 			recList.put(coordinate, rec);
 		}
 		repaint();
